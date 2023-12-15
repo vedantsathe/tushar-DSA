@@ -1,0 +1,84 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_LOCATIONS 10
+
+typedef struct {
+    char name[50];
+} Location;
+
+typedef struct {
+    int vertices;
+    int adjacencyMatrix[MAX_LOCATIONS][MAX_LOCATIONS];
+    Location locations[MAX_LOCATIONS];
+} CityGraph;
+
+void initializeCityGraph(CityGraph *cityGraph, int vertices) {
+    cityGraph->vertices = vertices;
+    for (int i = 0; i < vertices; ++i) {
+        for (int j = 0; j < vertices; ++j) {
+            cityGraph->adjacencyMatrix[i][j] = 0;
+        }
+    }
+}
+
+void addConnection(CityGraph *cityGraph, int start, int end) {
+    cityGraph->adjacencyMatrix[start][end] = 1;
+    cityGraph->adjacencyMatrix[end][start] = 1;
+}
+
+void addLocation(CityGraph *cityGraph, int index, const char *name) {
+    strcpy(cityGraph->locations[index].name, name);
+}
+
+void displayLocation(int locationIndex, const CityGraph *cityGraph) {
+    printf("%s", cityGraph->locations[locationIndex].name);
+}
+
+void DFS(CityGraph *cityGraph, int vertex, int visited[]) {
+    displayLocation(vertex, cityGraph);
+    visited[vertex] = 1;
+
+    for (int i = 0; i < cityGraph->vertices; ++i) {
+        if (cityGraph->adjacencyMatrix[vertex][i] == 1 && !visited[i]) {
+            printf(" -> ");
+            DFS(cityGraph, i, visited);
+        }
+    }
+}
+
+int main() {
+    CityGraph cityGraph;
+    int vertices, connections;
+
+    printf("Enter the number of locations in the city: ");
+    scanf("%d", &vertices);
+
+    initializeCityGraph(&cityGraph, vertices);
+
+    for (int i = 0; i < vertices; ++i) {
+        char name[50];
+        printf("Enter the name of location %d: ", i);
+        scanf("%s", name);
+        addLocation(&cityGraph, i, name);
+    }
+
+    printf("Enter the number of connections between locations: ");
+    scanf("%d", &connections);
+
+    printf("Enter the connections (format: start end):\n");
+    for (int i = 0; i < connections; ++i) {
+        int start, end;
+        printf("Enter connection %d: ", i + 1);
+        scanf("%d %d", &start, &end);
+        addConnection(&cityGraph, start, end);
+    }
+
+    printf("\nDepth-First Search starting from location 0:\n");
+    int visited[MAX_LOCATIONS] = {0};
+    DFS(&cityGraph, 0, visited);
+    printf("\n");
+
+    return 0;
+}

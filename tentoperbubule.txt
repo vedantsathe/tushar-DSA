@@ -1,0 +1,42 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+struct Student {
+    char name[50];
+    float percentage;
+};
+
+void bubbleSort(struct Student students[], int size) {
+    for (int i = 0; i < size - 1; ++i) {
+        for (int j = 0; j < size - i - 1; ++j) {
+            if (students[j].percentage < students[j + 1].percentage) {
+                struct Student temp = students[j];
+                students[j] = students[j + 1];
+                students[j + 1] = temp;
+            }
+        }
+    }
+}
+
+int main() {
+    int classSize;
+    printf("Enter the number of students: ");
+    scanf("%d", &classSize);
+    struct Student *classList = (struct Student *)malloc(classSize * sizeof(struct Student));
+    for (int i = 0; i < classSize; ++i) {
+        printf("Enter details for student %d:\n", i + 1);
+        printf("Name: ");
+        scanf("%s", classList[i].name);
+        printf("Percentage: ");
+        scanf("%f", &classList[i].percentage);
+    }
+    bubbleSort(classList, classSize);
+    printf("\nTop Ten Toppers:\n");
+    printf("Rank\tName\tPercentage\n");
+    for (int i = 0; i < 10 && i < classSize; ++i) {
+        printf("%d\t%s\t%.2f\n", i + 1, classList[i].name, classList[i].percentage);
+    }
+    free(classList);
+
+    return 0;
+}
